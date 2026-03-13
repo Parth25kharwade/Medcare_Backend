@@ -1,0 +1,313 @@
+{
+  "info": {
+    "name": "MedCare Healthcare Platform API",
+    "description": "AI-Driven Healthcare Intelligence Platform — Hackathon Edition",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "base_url", "value": "http://localhost:8080" },
+    { "key": "doctor_token", "value": "" },
+    { "key": "admin_token", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "🔐 Auth",
+      "item": [
+        {
+          "name": "Register Doctor",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "url": "{{base_url}}/api/auth/register",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fullName\": \"Dr. Sarah Johnson\",\n  \"email\": \"sarah.johnson@medcare.com\",\n  \"password\": \"password123\",\n  \"phone\": \"+1-555-0101\",\n  \"specialization\": \"Internal Medicine\",\n  \"hospitalId\": 1,\n  \"role\": \"ROLE_DOCTOR\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Register Admin",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "url": "{{base_url}}/api/auth/register",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fullName\": \"Admin John Smith\",\n  \"email\": \"admin@medcare.com\",\n  \"password\": \"admin123\",\n  \"hospitalId\": 1,\n  \"role\": \"ROLE_ADMIN\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Login Doctor",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var json = pm.response.json();",
+                  "if (json.data && json.data.token) {",
+                  "    pm.collectionVariables.set('doctor_token', json.data.token);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "url": "{{base_url}}/api/auth/login",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"sarah.johnson@medcare.com\",\n  \"password\": \"password123\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Login Admin",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var json = pm.response.json();",
+                  "if (json.data && json.data.token) {",
+                  "    pm.collectionVariables.set('admin_token', json.data.token);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "url": "{{base_url}}/api/auth/login",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@medcare.com\",\n  \"password\": \"admin123\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "👤 Patients",
+      "item": [
+        {
+          "name": "Create Patient",
+          "request": {
+            "method": "POST",
+            "header": [
+              {"key": "Content-Type", "value": "application/json"},
+              {"key": "Authorization", "value": "Bearer {{doctor_token}}"}
+            ],
+            "url": "{{base_url}}/api/patients",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fullName\": \"Michael Torres\",\n  \"dateOfBirth\": \"1985-06-15\",\n  \"gender\": \"MALE\",\n  \"bloodGroup\": \"O+\",\n  \"phone\": \"+1-555-0102\",\n  \"address\": \"789 Oak Street, New York\",\n  \"emergencyContact\": \"Ana Torres\",\n  \"emergencyPhone\": \"+1-555-0103\",\n  \"doctorId\": 1,\n  \"hospitalId\": 1\n}"
+            }
+          }
+        },
+        {
+          "name": "Get Patient by ID",
+          "request": {
+            "method": "GET",
+            "header": [{"key": "Authorization", "value": "Bearer {{doctor_token}}"}],
+            "url": "{{base_url}}/api/patients/1"
+          }
+        },
+        {
+          "name": "Update Patient",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {"key": "Content-Type", "value": "application/json"},
+              {"key": "Authorization", "value": "Bearer {{doctor_token}}"}
+            ],
+            "url": "{{base_url}}/api/patients/1",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phone\": \"+1-555-9999\",\n  \"address\": \"Updated Address, New York\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Get Patients by Doctor",
+          "request": {
+            "method": "GET",
+            "header": [{"key": "Authorization", "value": "Bearer {{doctor_token}}"}],
+            "url": "{{base_url}}/api/patients/doctor/1"
+          }
+        },
+        {
+          "name": "Get Patient History",
+          "request": {
+            "method": "GET",
+            "header": [{"key": "Authorization", "value": "Bearer {{doctor_token}}"}],
+            "url": "{{base_url}}/api/patients/1/history"
+          }
+        },
+        {
+          "name": "Create Medical Record",
+          "request": {
+            "method": "POST",
+            "header": [
+              {"key": "Content-Type", "value": "application/json"},
+              {"key": "Authorization", "value": "Bearer {{doctor_token}}"}
+            ],
+            "url": "{{base_url}}/api/patients/records",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"patientId\": 1,\n  \"recordType\": \"CONSULTATION\",\n  \"title\": \"Initial Visit - Fever & Fatigue\",\n  \"description\": \"Patient complains of high fever for 3 days\",\n  \"diagnosis\": \"Suspected viral infection\",\n  \"treatment\": \"Antipyretics, rest, fluids\",\n  \"medications\": \"Paracetamol 500mg TDS\",\n  \"visitDate\": \"2024-01-15\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "🧠 AI Diagnostics",
+      "item": [
+        {
+          "name": "Analyze Patient — Dengue Risk",
+          "request": {
+            "method": "POST",
+            "header": [
+              {"key": "Content-Type", "value": "application/json"},
+              {"key": "Authorization", "value": "Bearer {{doctor_token}}"}
+            ],
+            "url": "{{base_url}}/api/diagnosis/analyze",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"patientId\": 1,\n  \"symptoms\": [\"fever\", \"headache\", \"rash\", \"fatigue\"],\n  \"vitals\": {\n    \"temperature\": 39.8,\n    \"systolicBp\": 100,\n    \"diastolicBp\": 65,\n    \"heartRate\": 95,\n    \"oxygenSaturation\": 96.5,\n    \"respiratoryRate\": 18\n  },\n  \"labReport\": {\n    \"hemoglobin\": 11.5,\n    \"plateletCount\": 85000,\n    \"wbcCount\": 4200,\n    \"bloodSugar\": 95.0,\n    \"reportDate\": \"2024-01-15\"\n  }\n}"
+            }
+          }
+        },
+        {
+          "name": "Analyze Patient — Cardiac Risk",
+          "request": {
+            "method": "POST",
+            "header": [
+              {"key": "Content-Type", "value": "application/json"},
+              {"key": "Authorization", "value": "Bearer {{doctor_token}}"}
+            ],
+            "url": "{{base_url}}/api/diagnosis/analyze",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"patientId\": 1,\n  \"symptoms\": [\"chest pain\", \"shortness of breath\", \"palpitation\"],\n  \"vitals\": {\n    \"temperature\": 37.2,\n    \"systolicBp\": 165,\n    \"diastolicBp\": 105,\n    \"heartRate\": 112,\n    \"oxygenSaturation\": 93.0\n  },\n  \"labReport\": null\n}"
+            }
+          }
+        },
+        {
+          "name": "Analyze Patient — Multi Risk",
+          "request": {
+            "method": "POST",
+            "header": [
+              {"key": "Content-Type", "value": "application/json"},
+              {"key": "Authorization", "value": "Bearer {{doctor_token}}"}
+            ],
+            "url": "{{base_url}}/api/diagnosis/analyze",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"patientId\": 1,\n  \"symptoms\": [\"fever\", \"chest pain\", \"shortness of breath\", \"thirst\"],\n  \"vitals\": {\n    \"temperature\": 39.5,\n    \"systolicBp\": 155,\n    \"diastolicBp\": 98,\n    \"heartRate\": 108,\n    \"oxygenSaturation\": 91.0\n  },\n  \"labReport\": {\n    \"plateletCount\": 70000,\n    \"bloodSugar\": 280.0,\n    \"creatinine\": 1.8,\n    \"bilirubin\": 2.5,\n    \"alt\": 80.0,\n    \"reportDate\": \"2024-01-15\"\n  }\n}"
+            }
+          }
+        },
+        {
+          "name": "Get Diagnostic History (Patient)",
+          "request": {
+            "method": "GET",
+            "header": [{"key": "Authorization", "value": "Bearer {{doctor_token}}"}],
+            "url": "{{base_url}}/api/diagnosis/patient/1/history"
+          }
+        },
+        {
+          "name": "Get Doctor Critical Alerts",
+          "request": {
+            "method": "GET",
+            "header": [{"key": "Authorization", "value": "Bearer {{doctor_token}}"}],
+            "url": "{{base_url}}/api/diagnosis/alerts/doctor"
+          }
+        }
+      ]
+    },
+    {
+      "name": "🏥 Resources (Admin Only)",
+      "item": [
+        {
+          "name": "Update ICU Beds",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {"key": "Content-Type", "value": "application/json"},
+              {"key": "Authorization", "value": "Bearer {{admin_token}}"}
+            ],
+            "url": "{{base_url}}/api/resources/icu",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"hospitalId\": 1,\n  \"totalBeds\": 50,\n  \"occupiedBeds\": 46\n}"
+            }
+          }
+        },
+        {
+          "name": "Get ICU Status",
+          "request": {
+            "method": "GET",
+            "header": [{"key": "Authorization", "value": "Bearer {{admin_token}}"}],
+            "url": "{{base_url}}/api/resources/icu/1"
+          }
+        },
+        {
+          "name": "Update Staff Workload",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {"key": "Content-Type", "value": "application/json"},
+              {"key": "Authorization", "value": "Bearer {{admin_token}}"}
+            ],
+            "url": "{{base_url}}/api/resources/staff",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"hospitalId\": 1,\n  \"department\": \"ICU\",\n  \"totalStaff\": 20,\n  \"onDutyStaff\": 19\n}"
+            }
+          }
+        },
+        {
+          "name": "Predict Resource Stress",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Authorization", "value": "Bearer {{admin_token}}"}],
+            "url": "{{base_url}}/api/resources/predict/1"
+          }
+        },
+        {
+          "name": "Get Forecast History",
+          "request": {
+            "method": "GET",
+            "header": [{"key": "Authorization", "value": "Bearer {{admin_token}}"}],
+            "url": "{{base_url}}/api/resources/forecast/1"
+          }
+        }
+      ]
+    },
+    {
+      "name": "📊 Dashboards",
+      "item": [
+        {
+          "name": "Doctor Dashboard",
+          "request": {
+            "method": "GET",
+            "header": [{"key": "Authorization", "value": "Bearer {{doctor_token}}"}],
+            "url": "{{base_url}}/api/dashboard/doctor"
+          }
+        },
+        {
+          "name": "Admin Dashboard",
+          "request": {
+            "method": "GET",
+            "header": [{"key": "Authorization", "value": "Bearer {{admin_token}}"}],
+            "url": "{{base_url}}/api/dashboard/admin/1"
+          }
+        }
+      ]
+    }
+  ]
+}
