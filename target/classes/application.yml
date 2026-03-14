@@ -8,6 +8,7 @@ spring:
   application:
     name: medcare-platform
 
+
   datasource:
     url: jdbc:mysql://localhost:3306/medcare_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
     username: root
@@ -50,3 +51,9 @@ logging:
     com.medcare: DEBUG
     org.springframework.security: INFO
     org.hibernate.SQL: DEBUG
+gemini:
+  api:
+    key: AIzaSyAo4mmNf0n-4uqc9sF5Gs9unLk6qaRMkVY
+    url: https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash:generateContent
+
+

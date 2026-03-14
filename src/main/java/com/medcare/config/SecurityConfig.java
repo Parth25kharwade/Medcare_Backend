@@ -70,6 +70,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/patients/**").hasAnyRole("DOCTOR", "ADMIN")
                         .requestMatchers("/api/diagnosis/**").hasAnyRole("DOCTOR", "ADMIN")
                         .requestMatchers("/api/dashboard/**").hasAnyRole("DOCTOR", "ADMIN")
+                        .requestMatchers("/api/ai/**").hasRole("DOCTOR")
                         .anyRequest().authenticated()
                 )
                 .authenticationProvider(authenticationProvider())
@@ -82,7 +83,7 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
-        configuration.setAllowedOrigins(List.of("http://localhost:8081"));
+        configuration.setAllowedOrigins(List.of("http://localhost:8081","http://172.16.0.2:8081/","http://localhost:5173/"));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);
