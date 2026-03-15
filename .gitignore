@@ -1,0 +1,18 @@
+# Environment variables
+.env
+
+# Maven compiled files
+target/
+
+# IDE files
+.idea/
+*.iml
+*.class
+
+# Logs
+*.log
+logs/
+
+# OS files
+.DS_Store
+Thumbs.db
